@@ -1,3 +1,21 @@
+%{
+  int currLine = 1, currPos = 1;
+%}
+
+DIGIT [0-9]
+LETTER [a-zA-Z]
+
+%%
+"function" {printf("FUNCTION\n"); currPos += yyleng;}
+"beginparams" {printf("BEGIN_PARAMS\n"); currPos += yyleng;}
+"endparams" {printf("END_PARAMS\n"); currPos += yyleng;}
+"beginlocals" {printf("BEGIN_LOCALS\n"); currPos += yyleng;}
+"endlocals" {printf("END_LOCALS\n"); currPos += yyleng;}
+"beginbody" {printf("BEGIN_BODY\n"); currPos += yyleng;}
+"endbody" {printf("END_BODY\n"); currPos += yyleng;}
+"integer" {printf("INTEGER\n"); currPos += yyleng;}
+"array" {printf("ARRAY\n"); currPos += yyleng;}
+"of" {printf("OF\n"); currPos += yyleng;}
 "if" {printf("IF\n"); currPos += yyleng;}
 "then" {printf("THEN\n"); currPos += yyleng;}
 "endif" {printf("ENDIF\n"); currPos += yyleng;}
@@ -50,22 +68,3 @@
 [ \t]+ {/*ignore : whitespace */ currPos += yyleng;}
 
 "##".* {/*ignore : comments */ currLine++; currPos += yyleng;}
-
-"\n" {currLine++; currPos = 1;}
-
-. {printf("Error on line %d, column %d: unrecognized symbol: \"%s\"\n", currLine, currPos, yytext); exit(0);}
-
-%%
-
-int main(int argc, char** argv) {
-  if (argc >= 2) {
-    yyin = fopen(argv[1], "r");
-    if (yyin == NULL) {
-      yyin = stdin;
-    }
-  }
-  else {
-    yyin = stdin;
-  }
-  yylex();
-}
